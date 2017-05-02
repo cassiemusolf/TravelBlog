@@ -15,6 +15,24 @@ namespace TravelBlog.Models
             this.Experiences = new HashSet<Experience>();
         }
 
+        public override bool Equals(System.Object otherPlace)
+        {
+            if (!(otherPlace is Place))
+            {
+                return false;
+            }
+            else
+            {
+                Place newPlace = (Place)otherPlace;
+                return this.PlaceId.Equals(newPlace.PlaceId);
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return this.PlaceId.GetHashCode();
+        }
+
         [Key]
         public int PlaceId { get; set; }
         public string City { get; set; }

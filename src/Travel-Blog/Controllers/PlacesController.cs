@@ -12,15 +12,28 @@ namespace TravelBlog.Controllers
 {
     public class PlacesController : Controller
     {
+        private IPlaceRepository placeRepo;
+
+        public PlacesController(IPlaceRepository thisRepo = null)
+        {
+            if (thisRepo == null)
+            {
+                this.placeRepo = new EFPlaceRepository();
+            }
+            else
+            {
+                this.placeRepo = thisRepo;
+            }
+        }
 
         private TravelDbContext db = new TravelDbContext();
         public IActionResult Index()
         {
-            return View(db.Places.ToList());
+            return View(placeRepo.Places.ToList());
         }
         public IActionResult Details(int id)
         {
-            var thisPlace = db.Places.Include(places => places.Experiences).FirstOrDefault(places => places.PlaceId == id);
+            var thisPlace = placeRepo.Places.Include(places => places.Experiences).FirstOrDefault(places => places.PlaceId == id);
             return View(thisPlace);
         }
 
@@ -32,8 +45,8 @@ namespace TravelBlog.Controllers
         [HttpPost]
         public IActionResult Create(Place place)
         {
-            db.Places.Add(place);
-            db.SaveChanges();
+            placeRepo.Places.Add(place);
+            placeRepo.SaveChanges();
             return RedirectToAction("Index");
         }
 

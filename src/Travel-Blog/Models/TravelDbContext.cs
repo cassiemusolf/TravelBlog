@@ -15,13 +15,13 @@ namespace TravelBlog.Models
 
         }
 
-        public DbSet<Place> Places { get; set; }
+        public virtual DbSet<Place> Places { get; set; }
 
-        public DbSet<Experience> Experiences { get; set; }
+        public virtual DbSet<Experience> Experiences { get; set; }
 
-        public DbSet<People> Peoples { get; set; }
+        public virtual DbSet<People> Peoples { get; set; }
 
-        public DbSet<ExperiencePeople> ExperiencesPeoples { get; set; }
+        public virtual DbSet<ExperiencePeople> ExperiencesPeoples { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {

@@ -11,16 +11,29 @@ namespace TravelBlog.Controllers
 {
     public class PeoplesController : Controller
     {
-        private TravelDbContext db = new TravelDbContext();
+        //private TravelppRepoContext db = new TravelppRepoContext();
+        private IPeopleRepository ppRepo;
+
+        public PeoplesController (IPeopleRepository thisPpRepo = null)
+        {
+            if (thisPpRepo == null)
+            {
+                this.ppRepo = new EFPeopleRepository();
+            }
+            else
+            {
+                this.ppRepo = thisPpRepo;
+            }
+        }
         public IActionResult Index()
         {
-            return View(db.Peoples.ToList());
+            return View(ppRepo.Peoples.ToList());
         }
 
         public IActionResult Details(int id)
         {
-            var thisPeople = db.Peoples.FirstOrDefault(peoples => peoples.PeopleId == id);
-            ViewBag.Experience = db.Peoples
+            var thisPeople = ppRepo.Peoples.FirstOrDefault(peoples => peoples.PeopleId == id);
+            ViewBag.Experience = ppRepo.Peoples
                 .Include(people => people.ExperiencesPeoples)
                 .ThenInclude(experiencesPeoples => experiencesPeoples.Experience)
                 .ThenInclude(experience => experience.Place)
@@ -36,35 +49,33 @@ namespace TravelBlog.Controllers
         [HttpPost]
         public IActionResult Create(People people)
         {
-            db.Peoples.Add(people);
-            db.SaveChanges();
+            ppRepo.Create(people);
             return RedirectToAction("Index");
         }
         public IActionResult Edit(int id)
         {
-            var thisPeople = db.Peoples.FirstOrDefault(peoples => peoples.PeopleId == id);
+            var thisPeople = ppRepo.Peoples.FirstOrDefault(peoples => peoples.PeopleId == id);
             return View(thisPeople);
         }
 
         [HttpPost]
         public IActionResult Edit(People people)
         {
-            db.Entry(people).State = EntityState.Modified;
-            db.SaveChanges();
+            ppRepo.Edit(people);
             return RedirectToAction("Index");
         }
         public IActionResult Delete(int id)
         {
-            var thisPeople = db.Peoples.FirstOrDefault(peoples => peoples.PeopleId == id);
+            var thisPeople = ppRepo.Peoples.FirstOrDefault(peoples => peoples.PeopleId == id);
             return View(thisPeople);
         }
         [HttpPost, ActionName("Delete")]
         public IActionResult DeleteConfirmed(int id)
         {
-            var thisPeople = db.Peoples.FirstOrDefault(peoples => peoples.PeopleId == id);
-            db.Peoples.Remove(thisPeople);
-            db.SaveChanges();
+            var thisPeople = ppRepo.Peoples.FirstOrDefault(peoples => peoples.PeopleId == id);
+            ppRepo.DeleteConfirmed(thisPeople);
             return RedirectToAction("Index");
         }
+        
     }
 }
